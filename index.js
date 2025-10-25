@@ -44,5 +44,9 @@ app.post('/convert', upload.single('audio'), async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.send('API de Conversão de Áudio está funcionando!');
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API rodando na porta ${PORT}`));
