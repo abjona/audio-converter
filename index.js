@@ -34,8 +34,8 @@ app.post('/convert', upload.single('audio'), async (req, res) => {
     const base64Audio = fs.readFileSync(outputFile, { encoding: 'base64' });
 
     // Remove arquivos temporários
-    fs.unlinkSync(inputFile);
-    fs.unlinkSync(outputFile);
+    // fs.unlinkSync(inputFile);
+    // fs.unlinkSync(outputFile);
 
     res.json({ base64: `data:audio/ogg;base64,${base64Audio}` });
   } catch (err) {
