@@ -2,6 +2,7 @@ version: "3.8"
 services:
   audio-api:
     build:
+      context: .
       dockerfile: Dockerfile
     container_name: audio-converter-api
     restart: unless-stopped
