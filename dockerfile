@@ -20,7 +20,7 @@ RUN npm install --production
 COPY . .
 
 # Expor a porta
-EXPOSE 3000
+EXPOSE 3001
 
 # Comando para rodar a API
 CMD ["node", "index.js"]
