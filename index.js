@@ -32,14 +32,11 @@ app.post('/convert', upload.single('audio'), async (req, res) => {
         .on('error', reject);
     });
 
-    // Lê arquivo convertido e gera Base64
-    const base64Audio = fs.readFileSync(outputFile, { encoding: 'base64' });
-
     // Remove arquivos temporários
     fs.unlinkSync(inputFile);
     // fs.unlinkSync(outputFile);
 
-    res.json({ base64: `${base64Audio}`, fileName: outputFile });
+    res.json({ fileName: outputFile });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao converter áudio' });
