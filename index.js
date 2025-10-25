@@ -43,6 +43,60 @@ app.post('/convert', upload.single('audio'), async (req, res) => {
   }
 });
 
+const CLEANUP_SECRET = 'conduz@limpeza123';
+
+// Rota para limpar arquivos com mais de 24 horas
+app.post('/cleanup', (req, res) => {
+  const { secret } = req.body;
+
+  // 1. Verifica o Segredo
+  if (secret !== CLEANUP_SECRET) {
+    return res.status(403).json({ error: 'Acesso negado. Segredo inválido.' });
+  }
+
+  const uploadDir = path.join(__dirname, 'uploads');
+  // Define a idade máxima dos arquivos (em milissegundos)
+  // Ex: 24 * 60 * 60 * 1000 = 24 horas
+  const maxAge = 24 * 60 * 60 * 1000; 
+  const now = Date.now();
+  let deletedCount = 0;
+
+  try {
+    const files = fs.readdirSync(uploadDir);
+
+    files.forEach(file => {
+      // Garante que estamos apagando apenas arquivos .ogg
+      if (path.extname(file) !== '.ogg') {
+        return; // Pula arquivos que não são .ogg (como .gitkeep)
+      }
+
+      const filePath = path.join(uploadDir, file);
+      
+      try {
+        const stats = fs.statSync(filePath);
+        const fileAge = now - stats.mtime.getTime(); // mtime = data da última modificação
+
+        // 2. Verifica a Idade do Arquivo
+        if (fileAge > maxAge) {
+          fs.unlinkSync(filePath); // Apaga o arquivo
+          deletedCount++;
+        }
+      } catch (err) {
+        console.error(`Erro ao verificar ou apagar o arquivo ${filePath}:`, err.message);
+      }
+    });
+
+    res.json({ 
+      message: 'Limpeza de arquivos antigos concluída.',
+      deletedCount: deletedCount 
+    });
+
+  } catch (err) {
+    console.error('Erro ao ler o diretório de uploads:', err);
+    res.status(500).json({ error: 'Erro ao processar a limpeza.' });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('API de Conversão de Áudio está funcionando!');
 });
