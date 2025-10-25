@@ -11,6 +11,8 @@ const upload = multer({ dest: 'uploads/' });
 app.use(cors());
 app.use(express.json());
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Endpoint para converter áudio
 app.post('/convert', upload.single('audio'), async (req, res) => {
   try {
@@ -34,10 +36,10 @@ app.post('/convert', upload.single('audio'), async (req, res) => {
     const base64Audio = fs.readFileSync(outputFile, { encoding: 'base64' });
 
     // Remove arquivos temporários
-    // fs.unlinkSync(inputFile);
+    fs.unlinkSync(inputFile);
     // fs.unlinkSync(outputFile);
 
-    res.json({ base64: `data:audio/ogg;base64,${base64Audio}` });
+    res.json({ base64: `${base64Audio}`, fileName: outputFile });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao converter áudio' });
